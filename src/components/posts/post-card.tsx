@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Heart, MessageCircle, PlayCircle, Volume2 } from 'lucide-react';
+import { Heart, MessageCircle } from 'lucide-react'; // Removed PlayCircle, Volume2 as they weren't used
 import { formatDistanceToNow } from 'date-fns';
 import { likePost, addComment } from '@/services/posts';
 import { useToast } from '@/hooks/use-toast';
@@ -70,7 +70,7 @@ export function PostCard({ post }: PostCardProps) {
     switch (post.mediaType) {
       case 'image':
         return (
-          <div className="relative aspect-video w-full overflow-hidden rounded-md">
+          <div className="relative aspect-video w-full overflow-hidden"> // removed rounded-md
             <Image
               src={post.mediaUrl}
               alt={post.description || 'User post'}
@@ -83,7 +83,7 @@ export function PostCard({ post }: PostCardProps) {
         );
       case 'video':
         return (
-          <div className="relative aspect-video w-full overflow-hidden rounded-md bg-black flex items-center justify-center">
+          <div className="relative aspect-video w-full overflow-hidden bg-black flex items-center justify-center"> // removed rounded-md
              {/* Basic video placeholder - A real app would use a video player */}
              <video controls className="w-full h-full object-contain" preload="metadata">
                 <source src={post.mediaUrl} type="video/mp4" />
@@ -93,7 +93,7 @@ export function PostCard({ post }: PostCardProps) {
         );
       case 'audio':
         return (
-           <div className="relative w-full rounded-md bg-secondary p-4 flex items-center justify-center">
+           <div className="relative w-full bg-secondary p-4 flex items-center justify-center"> // removed rounded-md
              {/* Basic audio placeholder - A real app would use an audio player */}
              <audio controls className="w-full" preload="metadata">
                 <source src={post.mediaUrl} type="audio/mpeg" />
@@ -102,7 +102,7 @@ export function PostCard({ post }: PostCardProps) {
           </div>
         );
       default:
-        return <div className="h-48 w-full bg-muted flex items-center justify-center rounded-md">Unsupported media type</div>;
+        return <div className="h-48 w-full bg-muted flex items-center justify-center">Unsupported media type</div>; // removed rounded-md
     }
   };
 
@@ -161,7 +161,7 @@ export function PostCardSkeleton() {
   return (
     <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-md">
       <CardHeader className="flex flex-row items-center gap-3 p-4">
-        <Skeleton className="h-10 w-10 rounded-full" />
+        <Skeleton className="h-10 w-10" /> // removed rounded-full
         <div className="flex flex-col space-y-1">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-3 w-16" />

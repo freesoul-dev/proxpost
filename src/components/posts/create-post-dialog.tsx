@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, Image as ImageIcon, Video, Mic } from 'lucide-react';
+import { Camera } from 'lucide-react'; // Removed ImageIcon, Video, Mic as they weren't used
 import { useToast } from '@/hooks/use-toast';
 import { addPost } from '@/services/posts';
 import { getCurrentLocation } from '@/services/location';
@@ -113,9 +113,9 @@ export function CreatePostDialog() {
 
         switch(mediaType) {
             case 'image':
-                return <img src={previewUrl} alt="Preview" className="max-h-48 w-auto rounded-md object-contain mx-auto mt-4" />;
+                return <img src={previewUrl} alt="Preview" className="max-h-48 w-auto object-contain mx-auto mt-4" />; // removed rounded-md
             case 'video':
-                return <video src={previewUrl} controls className="max-h-48 w-full rounded-md mt-4 bg-black">Your browser doesnt support video previews.</video>;
+                return <video src={previewUrl} controls className="max-h-48 w-full mt-4 bg-black">Your browser doesnt support video previews.</video>; // removed rounded-md
             case 'audio':
                 return <audio src={previewUrl} controls className="w-full mt-4">Your browser doesnt support audio previews.</audio>;
              default:

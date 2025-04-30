@@ -32,7 +32,7 @@ body {
     --chart-3: 180 60% 45%;
     --chart-4: 180 40% 55%;
     --chart-5: 180 20% 65%;
-    --radius: 0.5rem;
+    --radius: 0rem; /* Changed from 0.5rem to 0rem */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -76,6 +76,7 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 180 100% 35%;
+    --radius: 0rem; /* Ensure dark mode also has 0 radius */
   }
 }
 
