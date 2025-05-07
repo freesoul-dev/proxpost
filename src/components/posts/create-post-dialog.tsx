@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback, ChangeEvent, useEffect } from 'react';
@@ -15,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, FileText } from 'lucide-react';
+import { Camera, FileText, PlusCircle } from 'lucide-react'; // Added PlusCircle
 import { useToast } from '@/hooks/use-toast';
 import { addPost } from '@/services/posts';
 import { getCurrentLocation } from '@/services/location';
@@ -27,15 +28,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_MEDIA_SIZE = 20 * 1024 * 1024; // 20MB (for video/audio)
 
-export function CreatePostDialog() {
+interface CreatePostDialogProps {
+  children?: React.ReactNode; // To allow custom trigger
+}
+
+export function CreatePostDialog({ children }: CreatePostDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [description, setDescription] = useState('');
     const [file, setFile] = useState<File | null>(null);
-    const [postType, setPostType] = useState<MediaType>('image'); // 'image', 'video', 'audio', 'text'
+    const [postType, setPostType] = useState<MediaType>('image'); 
     const [textContent, setTextContent] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [visibilityDuration, setVisibilityDuration] = useState<string>("24"); // Default to 24 hours (value is in hours)
+    const [visibilityDuration, setVisibilityDuration] = useState<string>("24"); 
     const { toast } = useToast();
 
     const handlePostTypeChange = (value: string) => {
@@ -73,7 +78,12 @@ export function CreatePostDialog() {
             }
             
             setFile(selectedFile);
-            // setPostType(determinedMediaType); // Post type is now controlled by RadioGroup
+            // Post type is controlled by RadioGroup, but we can auto-select if user uploads a file of a different type than selected.
+            // For now, we keep it simple: user selects type, then uploads matching file.
+            // if (determinedMediaType && postType !== determinedMediaType) {
+            //    setPostType(determinedMediaType); 
+            // }
+
 
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -89,7 +99,7 @@ export function CreatePostDialog() {
     const resetForm = useCallback(() => {
         setDescription('');
         setFile(null);
-        // setPostType('image'); // Keep current post type selection
+        // setPostType('image'); // Keep current post type, or reset to default
         setTextContent('');
         setPreviewUrl(null);
         setIsSubmitting(false);
@@ -100,6 +110,18 @@ export function CreatePostDialog() {
         if (isSubmitting) return;
         if (postType !== 'text' && !file) {
             toast({ title: 'No media selected', description: 'Please upload a file for your media post.', variant: 'destructive' });
+            return;
+        }
+         if (postType === 'image' && file && !file.type.startsWith('image/')) {
+            toast({ title: 'Incorrect file type', description: 'Please upload an image file for an image post.', variant: 'destructive' });
+            return;
+        }
+        if (postType === 'video' && file && !file.type.startsWith('video/')) {
+            toast({ title: 'Incorrect file type', description: 'Please upload a video file for a video post.', variant: 'destructive' });
+            return;
+        }
+        if (postType === 'audio' && file && !file.type.startsWith('audio/')) {
+            toast({ title: 'Incorrect file type', description: 'Please upload an audio file for an audio post.', variant: 'destructive' });
             return;
         }
         if (postType === 'text' && !textContent.trim()) {
@@ -115,13 +137,19 @@ export function CreatePostDialog() {
             const expiresAt = new Date(Date.now() + durationMs);
 
             let mediaUrl: string | undefined = undefined;
+            // IMPORTANT: In a real app, 'file' must be uploaded to a storage service (e.g., Firebase Storage, Supabase Storage, S3)
+            // and 'mediaUrl' should be the URL returned by the storage service.
+            // Using 'previewUrl' (a base64 data URI) directly is NOT scalable or suitable for production
+            // as it embeds the entire file content in the database/data structure.
             if (postType !== 'text' && previewUrl) {
-              // In a real app, upload 'file' to storage, get URL. Using previewUrl as placeholder.
-              mediaUrl = previewUrl;
+              // This is a placeholder. Replace with actual file upload logic.
+              // Example: mediaUrl = await uploadFileToCloudStorage(file);
+              mediaUrl = previewUrl; 
+              console.warn("Development only: Using base64 previewUrl as mediaUrl. Implement actual file upload for production.");
             }
 
             await addPost({
-                userId: 'currentUser', // Mock user
+                userId: 'currentUser', 
                 userName: 'You',
                 userAvatarUrl: 'https://picsum.photos/seed/currentUser/40/40',
                 mediaUrl: mediaUrl,
@@ -135,7 +163,6 @@ export function CreatePostDialog() {
              toast({ title: 'Post Created!', description: 'Your post is now live.' });
              setIsOpen(false); 
              resetForm();
-             // Consider a global state or event to refresh feed
              window.dispatchEvent(new CustomEvent('postCreated'));
 
 
@@ -196,9 +223,11 @@ export function CreatePostDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) resetForm(); }}>
       <DialogTrigger asChild>
-        <Button>
-          <Camera className="mr-2 h-4 w-4" /> Create Post
-        </Button>
+        {children ? children : (
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" /> Create Post
+            </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md bg-background/80 dark:bg-background/60 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl">
         <DialogHeader>
@@ -210,7 +239,7 @@ export function CreatePostDialog() {
         <div className="grid gap-4 py-4">
             <div className="space-y-2">
                 <Label>Post Type</Label>
-                <RadioGroup value={postType} onValueChange={handlePostTypeChange} className="flex space-x-4">
+                <RadioGroup value={postType} onValueChange={handlePostTypeChange} className="flex space-x-2 sm:space-x-4 flex-wrap">
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="image" id="r-image" />
                         <Label htmlFor="r-image">Image</Label>
@@ -246,10 +275,10 @@ export function CreatePostDialog() {
             <div className="grid w-full gap-1.5">
                 <Label htmlFor="visibility">Post Visibility</Label>
                 <Select value={visibilityDuration} onValueChange={setVisibilityDuration} disabled={isSubmitting}>
-                    <SelectTrigger id="visibility">
+                    <SelectTrigger id="visibility" className="bg-background hover:bg-accent/10">
                         <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background/90 dark:bg-background/80 backdrop-blur-md border-white/20 dark:border-white/10">
                         <SelectItem value="12">12 hours</SelectItem>
                         <SelectItem value="24">24 hours</SelectItem>
                         <SelectItem value="72">72 hours (3 days)</SelectItem>
