@@ -4,7 +4,7 @@ import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
-import DynamicBackground from '@/components/layout/DynamicBackground';
+// import DynamicBackground from '@/components/layout/DynamicBackground';
 import { CommunityGuidelinesModal } from '@/components/layout/CommunityGuidelinesModal';
 
 const geistSans = Geist({
@@ -36,7 +36,13 @@ export default function RootLayout({
           'antialiased min-h-screen flex flex-col relative' // Added relative for z-indexing context
         )}
       >
-        <DynamicBackground />
+        {/* <DynamicBackground /> */}
+        <div
+          className="fixed inset-0 -z-10 bg-cover bg-center"
+          style={{ backgroundImage: `url('https://picsum.photos/seed/ocean_birdseye/1920/1080')` }}
+          data-ai-hint="ocean birdseye"
+          aria-hidden="true"
+        />
         {/* Content wrapper to ensure it's above the background */}
         <div className="relative z-0 flex flex-col flex-1 min-h-screen"> {/* z-0 or z-10, ensure content is above background */}
           <Header />
