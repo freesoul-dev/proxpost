@@ -1,9 +1,11 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
+import DynamicBackground from '@/components/layout/DynamicBackground';
+import { CommunityGuidelinesModal } from '@/components/layout/CommunityGuidelinesModal';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,14 +33,19 @@ export default function RootLayout({
         className={cn(
           geistSans.variable,
           geistMono.variable,
-          'antialiased min-h-screen flex flex-col'
+          'antialiased min-h-screen flex flex-col relative' // Added relative for z-indexing context
         )}
       >
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-8">
-          {children}
-        </main>
-        <Toaster />
+        <DynamicBackground />
+        {/* Content wrapper to ensure it's above the background */}
+        <div className="relative z-0 flex flex-col flex-1 min-h-screen"> {/* z-0 or z-10, ensure content is above background */}
+          <Header />
+          <main className="flex-1 container mx-auto px-4 py-8">
+            {children}
+          </main>
+          <Toaster />
+          <CommunityGuidelinesModal />
+        </div>
       </body>
     </html>
   );
