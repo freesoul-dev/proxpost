@@ -18,13 +18,6 @@ function cleanupExpiredPosts() {
   console.log("Cleaned up expired posts. Remaining:", postsStorage.length);
 }
 
-// Simulate periodic cleanup (e.g., every 5 minutes for demo)
-// In a real app, this cleanup logic would be on the backend.
-if (typeof window !== 'undefined') { // Ensure this only runs in the browser for the mock
-  setInterval(cleanupExpiredPosts, 5 * 60 * 1000); 
-}
-
-
 /**
  * Fetches posts within a specified radius of the user's location.
  * Simulates an API call.
@@ -107,4 +100,3 @@ export async function getPostById(postId: string): Promise<Post | null> {
     }
     return null;
 }
-
