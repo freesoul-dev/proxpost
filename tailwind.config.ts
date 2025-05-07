@@ -8,6 +8,12 @@ export default {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    borderRadius: { // Add this section
+        lg: `var(--radius)`,
+        md: `calc(var(--radius) - 2px)`,
+        sm: `calc(var(--radius) - 4px)`,
+        full: '9999px', // Keep full for things like avatars if needed explicitly
+      },
   	extend: {
   		colors: {
   			background: 'hsl(var(--background))',
@@ -61,7 +67,6 @@ export default {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
-        // Removed borderRadius extension as it's now controlled by CSS variable --radius
   		keyframes: {
   			'accordion-down': {
   				from: {
@@ -78,11 +83,16 @@ export default {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+        'pulse-shadow': { // Added from globals.css for consistency
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(50, 205, 50, 0.0)' },
+          '50%': { boxShadow: '0 0 20px 15px rgba(50, 205, 50, 0.6)' },
+        },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+        'pulse-shadow': 'pulse-shadow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite', // Added
   		}
   	}
   },

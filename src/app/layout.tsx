@@ -6,7 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 // import DynamicBackground from '@/components/layout/DynamicBackground';
 import { CommunityGuidelinesModal } from '@/components/layout/CommunityGuidelinesModal';
-import BottomActionBar from '@/components/layout/BottomActionBar'; // Added
+import ExpandingMenu from '@/components/layout/ExpandingMenu'; // Added
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -45,10 +45,10 @@ export default function RootLayout({
         />
         <div className="relative z-0 flex flex-col flex-1 min-h-screen">
           {/* <Header /> Removed Header */}
-          <main className="flex-1 container mx-auto px-4 py-8 pb-20"> {/* Added pb-20 for BottomActionBar spacing */}
+          <main className="flex-1 container mx-auto px-4 py-8 pb-24"> {/* Adjusted pb-24 for ExpandingMenu spacing */}
             {children}
           </main>
-          <BottomActionBar /> {/* Added BottomActionBar */}
+          <ExpandingMenu /> {/* Added ExpandingMenu */}
           <Toaster />
           <CommunityGuidelinesModal />
         </div>

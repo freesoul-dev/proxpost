@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useCallback, ChangeEvent, useEffect } from 'react';
@@ -16,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, FileText, PlusCircle } from 'lucide-react'; // Added PlusCircle
+import { Camera, FileText, PlusCircle, Image as ImageIcon } from 'lucide-react'; // Added PlusCircle, ImageIcon
 import { useToast } from '@/hooks/use-toast';
 import { addPost } from '@/services/posts';
 import { getCurrentLocation } from '@/services/location';
@@ -24,21 +23,25 @@ import type { Location } from '@/services/location';
 import type { MediaType } from '@/lib/types';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import Image from 'next/image'; // For previewing cover art
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_MEDIA_SIZE = 20 * 1024 * 1024; // 20MB (for video/audio)
 
 interface CreatePostDialogProps {
   children?: React.ReactNode; // To allow custom trigger
+  onPostCreated?: () => void; // Callback for when post is created
 }
 
-export function CreatePostDialog({ children }: CreatePostDialogProps) {
+export function CreatePostDialog({ children, onPostCreated }: CreatePostDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [description, setDescription] = useState('');
     const [file, setFile] = useState<File | null>(null);
+    const [coverArtFile, setCoverArtFile] = useState<File | null>(null);
     const [postType, setPostType] = useState<MediaType>('image'); 
     const [textContent, setTextContent] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [coverArtPreviewUrl, setCoverArtPreviewUrl] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [visibilityDuration, setVisibilityDuration] = useState<string>("24"); 
     const { toast } = useToast();
@@ -48,42 +51,46 @@ export function CreatePostDialog({ children }: CreatePostDialogProps) {
       setFile(null);
       setPreviewUrl(null);
       setTextContent('');
+      if (value !== 'audio') {
+        setCoverArtFile(null);
+        setCoverArtPreviewUrl(null);
+      }
     };
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const selectedFile = event.target.files?.[0];
         if (selectedFile) {
             let determinedMediaType: MediaType | null = null;
+            let maxSize = MAX_MEDIA_SIZE;
+            let typeErrorMsg = 'Please upload an image, video, or audio file.';
+
             if (selectedFile.type.startsWith('image/')) {
-                if (selectedFile.size > MAX_IMAGE_SIZE) {
-                    toast({ title: 'Image too large', description: `Maximum image size is ${MAX_IMAGE_SIZE / 1024 / 1024}MB.`, variant: 'destructive'});
-                    return;
-                }
+                maxSize = MAX_IMAGE_SIZE;
+                typeErrorMsg = `Maximum image size is ${MAX_IMAGE_SIZE / 1024 / 1024}MB.`;
                 determinedMediaType = 'image';
             } else if (selectedFile.type.startsWith('video/')) {
-                if (selectedFile.size > MAX_MEDIA_SIZE) {
-                    toast({ title: 'Video too large', description: `Maximum video size is ${MAX_MEDIA_SIZE / 1024 / 1024}MB.`, variant: 'destructive'});
-                    return;
-                }
+                typeErrorMsg = `Maximum video size is ${MAX_MEDIA_SIZE / 1024 / 1024}MB.`;
                 determinedMediaType = 'video';
             } else if (selectedFile.type.startsWith('audio/')) {
-                 if (selectedFile.size > MAX_MEDIA_SIZE) {
-                    toast({ title: 'Audio file too large', description: `Maximum audio file size is ${MAX_MEDIA_SIZE / 1024 / 1024}MB.`, variant: 'destructive'});
-                    return;
-                }
+                typeErrorMsg = `Maximum audio file size is ${MAX_MEDIA_SIZE / 1024 / 1024}MB.`;
                 determinedMediaType = 'audio';
-            } else {
+            }
+            
+            if (!determinedMediaType) {
                  toast({ title: 'Unsupported file type', description: 'Please upload an image, video, or audio file.', variant: 'destructive'});
                  return;
             }
+            if (selectedFile.size > maxSize) {
+                toast({ title: `${determinedMediaType.charAt(0).toUpperCase() + determinedMediaType.slice(1)} too large`, description: typeErrorMsg, variant: 'destructive'});
+                return;
+            }
             
             setFile(selectedFile);
-            // Post type is controlled by RadioGroup, but we can auto-select if user uploads a file of a different type than selected.
-            // For now, we keep it simple: user selects type, then uploads matching file.
-            // if (determinedMediaType && postType !== determinedMediaType) {
-            //    setPostType(determinedMediaType); 
-            // }
-
+            // Auto-select post type if a file is uploaded that matches a different type than currently selected.
+            // This provides a smoother UX.
+            if (postType !== determinedMediaType) {
+               setPostType(determinedMediaType);
+            }
 
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -96,12 +103,38 @@ export function CreatePostDialog({ children }: CreatePostDialogProps) {
         }
     };
 
+    const handleCoverArtChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files?.[0];
+        if (selectedFile) {
+            if (!selectedFile.type.startsWith('image/')) {
+                toast({ title: 'Invalid cover art', description: 'Please upload an image file for cover art.', variant: 'destructive'});
+                return;
+            }
+            if (selectedFile.size > MAX_IMAGE_SIZE) {
+                toast({ title: 'Cover art too large', description: `Maximum image size is ${MAX_IMAGE_SIZE / 1024 / 1024}MB.`, variant: 'destructive'});
+                return;
+            }
+            setCoverArtFile(selectedFile);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setCoverArtPreviewUrl(reader.result as string);
+            };
+            reader.readAsDataURL(selectedFile);
+        } else {
+            setCoverArtFile(null);
+            setCoverArtPreviewUrl(null);
+        }
+    };
+
+
     const resetForm = useCallback(() => {
         setDescription('');
         setFile(null);
-        // setPostType('image'); // Keep current post type, or reset to default
+        setCoverArtFile(null);
+        // setPostType('image'); // Keep current post type or reset to default. Current is better.
         setTextContent('');
         setPreviewUrl(null);
+        setCoverArtPreviewUrl(null);
         setIsSubmitting(false);
         setVisibilityDuration("24");
     }, []);
@@ -137,22 +170,26 @@ export function CreatePostDialog({ children }: CreatePostDialogProps) {
             const expiresAt = new Date(Date.now() + durationMs);
 
             let mediaUrl: string | undefined = undefined;
-            // IMPORTANT: In a real app, 'file' must be uploaded to a storage service (e.g., Firebase Storage, Supabase Storage, S3)
-            // and 'mediaUrl' should be the URL returned by the storage service.
-            // Using 'previewUrl' (a base64 data URI) directly is NOT scalable or suitable for production
-            // as it embeds the entire file content in the database/data structure.
+            let coverArtUrlToSubmit: string | undefined = undefined;
+
+            // IMPORTANT: In a real app, 'file' and 'coverArtFile' must be uploaded to a storage service
+            // Using base64 data URIs directly is NOT scalable for production.
             if (postType !== 'text' && previewUrl) {
-              // This is a placeholder. Replace with actual file upload logic.
-              // Example: mediaUrl = await uploadFileToCloudStorage(file);
-              mediaUrl = previewUrl; 
+              mediaUrl = previewUrl; // Placeholder for actual upload URL
               console.warn("Development only: Using base64 previewUrl as mediaUrl. Implement actual file upload for production.");
             }
+            if (postType === 'audio' && coverArtPreviewUrl) {
+              coverArtUrlToSubmit = coverArtPreviewUrl; // Placeholder
+              console.warn("Development only: Using base64 coverArtPreviewUrl as coverArtUrl. Implement actual file upload for production.");
+            }
+
 
             await addPost({
                 userId: 'currentUser', 
                 userName: 'You',
                 userAvatarUrl: 'https://picsum.photos/seed/currentUser/40/40',
                 mediaUrl: mediaUrl,
+                coverArtUrl: coverArtUrlToSubmit,
                 mediaType: postType,
                 textContent: postType === 'text' ? textContent : undefined,
                 description,
@@ -164,6 +201,7 @@ export function CreatePostDialog({ children }: CreatePostDialogProps) {
              setIsOpen(false); 
              resetForm();
              window.dispatchEvent(new CustomEvent('postCreated'));
+             if(onPostCreated) onPostCreated();
 
 
         } catch (error) {
@@ -171,7 +209,7 @@ export function CreatePostDialog({ children }: CreatePostDialogProps) {
              toast({ title: 'Failed to create post', description: (error as Error).message || 'An error occurred. Please try again.', variant: 'destructive' });
              setIsSubmitting(false);
         }
-     }, [postType, file, textContent, description, isSubmitting, toast, resetForm, previewUrl, visibilityDuration]);
+     }, [postType, file, textContent, description, isSubmitting, toast, resetForm, previewUrl, visibilityDuration, coverArtPreviewUrl, onPostCreated]);
 
 
      const renderMediaInput = () => {
@@ -191,17 +229,36 @@ export function CreatePostDialog({ children }: CreatePostDialogProps) {
             );
         }
         return (
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-                <Label htmlFor="media-upload">Media File ({postType})</Label>
-                <Input
-                    id="media-upload"
-                    type="file"
-                    accept={postType === 'image' ? 'image/*' : postType === 'video' ? 'video/*' : 'audio/*'}
-                    onChange={handleFileChange}
-                    disabled={isSubmitting}
-                />
-                {previewUrl && renderPreview()}
-            </div>
+            <>
+                <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="media-upload">Media File ({postType})</Label>
+                    <Input
+                        id="media-upload"
+                        type="file"
+                        accept={postType === 'image' ? 'image/*' : postType === 'video' ? 'video/*' : 'audio/*'}
+                        onChange={handleFileChange}
+                        disabled={isSubmitting}
+                    />
+                    {previewUrl && renderPreview()}
+                </div>
+                {postType === 'audio' && (
+                    <div className="grid w-full max-w-sm items-center gap-1.5 mt-4">
+                        <Label htmlFor="cover-art-upload">Cover Art (optional for audio)</Label>
+                        <Input
+                            id="cover-art-upload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleCoverArtChange}
+                            disabled={isSubmitting}
+                        />
+                        {coverArtPreviewUrl && (
+                            <div className="mt-2 flex justify-center">
+                                <Image src={coverArtPreviewUrl} alt="Cover art preview" width={100} height={100} className="object-contain rounded-md" data-ai-hint="cover art" />
+                            </div>
+                        )}
+                    </div>
+                )}
+            </>
         );
      };
      
@@ -210,10 +267,11 @@ export function CreatePostDialog({ children }: CreatePostDialogProps) {
 
         switch(postType) {
             case 'image':
-                return <img src={previewUrl} alt="Preview" className="max-h-48 w-auto object-contain mx-auto mt-4" data-ai-hint="media preview" />;
+                return <Image src={previewUrl} alt="Preview" width={200} height={200} className="max-h-48 w-auto object-contain mx-auto mt-4 rounded-md" data-ai-hint="media preview" />;
             case 'video':
-                return <video src={previewUrl} controls className="max-h-48 w-full mt-4 bg-black">Your browser doesnt support video previews.</video>;
+                return <video src={previewUrl} controls className="max-h-48 w-full mt-4 bg-black rounded-md">Your browser doesnt support video previews.</video>;
             case 'audio':
+                 // For audio, primary preview is the player. Cover art is separate.
                 return <audio src={previewUrl} controls className="w-full mt-4">Your browser doesnt support audio previews.</audio>;
             default:
                 return null;
@@ -229,7 +287,7 @@ export function CreatePostDialog({ children }: CreatePostDialogProps) {
             </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md bg-background/80 dark:bg-background/60 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl">
+      <DialogContent className="sm:max-w-md bg-background/80 dark:bg-background/60 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl rounded-lg">
         <DialogHeader>
           <DialogTitle>Create a new post</DialogTitle>
           <DialogDescription>

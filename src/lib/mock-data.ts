@@ -45,6 +45,7 @@ export const mockPosts: Post[] = [
     userId: 'user3',
     userName: 'Charlie',
     mediaUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3',
+    coverArtUrl: 'https://picsum.photos/seed/cover3/300/300',
     mediaType: 'audio',
     description: 'Cool music playing in Echo Park.',
     location: createNearbyLocation(baseLocation, 0.02, 0.01),

@@ -8,6 +8,7 @@ export interface Post {
   userName: string; // Simple user identifier for display
   userAvatarUrl?: string; // Optional user avatar
   mediaUrl?: string; // Optional, especially for text posts
+  coverArtUrl?: string; // Optional: For audio posts, URL to an image for cover art
   mediaType: MediaType;
   textContent?: string; // For text posts
   description?: string; // Optional description for any post type

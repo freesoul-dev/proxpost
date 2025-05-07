@@ -32,7 +32,7 @@ body {
     --chart-3: 180 60% 45%;
     --chart-4: 180 40% 55%;
     --chart-5: 180 20% 65%;
-    --radius: 0rem; /* Changed from 0.5rem to 0rem */
+    --radius: 0.75rem; /* Changed from 0rem to 0.75rem for rounded corners */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -76,7 +76,7 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 180 100% 35%;
-    --radius: 0rem; /* Ensure dark mode also has 0 radius */
+    --radius: 0.75rem; /* Ensure dark mode also has rounded radius */
   }
 }
 
@@ -86,5 +86,20 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .animate-pulse-shadow {
+    animation: pulse-shadow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+@keyframes pulse-shadow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.0); /* Adjusted from accent to green */
+  }
+  50% {
+    box-shadow: 0 0 20px 15px rgba(50, 205, 50, 0.6); /* Adjusted from accent to green */
   }
 }

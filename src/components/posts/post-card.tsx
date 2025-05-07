@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Heart, MessageCircle, Share2, Copy, FileText } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Copy, Music2 } from 'lucide-react';
 import { formatDistanceToNowStrict, formatRelative } from 'date-fns';
 import { likePost, addComment } from '@/services/posts';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { cn } from '@/lib/utils';
 
 interface PostCardProps {
   post: Post;
@@ -121,53 +122,78 @@ export function PostCard({ post }: PostCardProps) {
     switch (post.mediaType) {
       case 'image':
         return (
-          <div className="relative aspect-video w-full overflow-hidden">
+          <div className="relative aspect-video w-full overflow-hidden rounded-t-lg">
             <Image
               src={post.mediaUrl!}
               alt={post.description || 'User post image'}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority={post.id === '1'}
+              priority={post.id === '1'} // Example: prioritize first post for LCP
               data-ai-hint="user image"
             />
           </div>
         );
       case 'video':
         return (
-          <div className="relative aspect-video w-full overflow-hidden bg-black flex items-center justify-center">
+          <div className="relative aspect-video w-full overflow-hidden bg-black flex items-center justify-center rounded-t-lg">
              <video controls className="w-full h-full object-contain" preload="metadata">
-                <source src={post.mediaUrl!} /> {/* Removed type, browser can infer */}
+                <source src={post.mediaUrl!} />
                 Your browser does not support the video tag.
              </video>
           </div>
         );
       case 'audio':
         return (
-           <div className="relative w-full bg-secondary/50 p-4 flex items-center justify-center">
-             <audio controls className="w-full" preload="metadata">
-                <source src={post.mediaUrl!} /> {/* Removed type */}
-                Your browser does not support the audio element.
-             </audio>
+           <div className={cn(
+             "relative w-full p-4 flex items-center justify-center rounded-t-lg",
+             post.coverArtUrl ? "min-h-[200px]" : "bg-secondary/50"
+           )}>
+             {post.coverArtUrl && (
+                <Image 
+                    src={post.coverArtUrl} 
+                    alt={post.description || "Audio cover art"} 
+                    fill
+                    className="object-cover opacity-30 dark:opacity-20 blur-sm"
+                    data-ai-hint="audio cover"
+                />
+             )}
+             <div className="relative z-10 w-full flex flex-col items-center space-y-3">
+                {post.coverArtUrl && (
+                    <Image 
+                        src={post.coverArtUrl} 
+                        alt={post.description || "Audio cover art"} 
+                        width={128} 
+                        height={128} 
+                        className="rounded-md shadow-lg border border-white/10"
+                        data-ai-hint="audio cover"
+                    />
+                )}
+                {!post.coverArtUrl && <Music2 className="w-16 h-16 text-muted-foreground mb-2" />}
+                 <audio controls className="w-full" preload="metadata">
+                    <source src={post.mediaUrl!} />
+                    Your browser does not support the audio element.
+                 </audio>
+             </div>
           </div>
         );
       case 'text':
         return (
-          <div className="p-4 min-h-[100px] flex items-center">
+          <div className="p-4 min-h-[100px] flex items-center rounded-t-lg">
             <p className="text-lg whitespace-pre-wrap break-words">{post.textContent}</p>
           </div>
         );
       default:
-        return <div className="h-48 w-full bg-muted/50 flex items-center justify-center">Unsupported media type</div>;
+        return <div className="h-48 w-full bg-muted/50 flex items-center justify-center rounded-t-lg">Unsupported media type</div>;
     }
   };
 
   return (
-    <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group bg-background/70 dark:bg-background/50 backdrop-blur-md border border-white/20 dark:border-white/10">
+    <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group bg-background/70 dark:bg-background/50 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg">
       <CardHeader className="flex flex-row items-center gap-3 p-4">
-        <Avatar className="h-10 w-10 border border-white/10">
+        <Avatar className="h-10 w-10 border border-white/10 rounded-full">
           <AvatarImage src={post.userAvatarUrl} alt={`${post.userName}'s avatar`} data-ai-hint="user avatar" />
-          <AvatarFallback>{post.userName.charAt(0).toUpperCase()}</AvatarFallback>
+          <AvatarFallback className="rounded-full">{post.userName.charAt(0).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
           <CardTitle className="text-base font-medium">{post.userName}</CardTitle>
@@ -189,13 +215,12 @@ export function PostCard({ post }: PostCardProps) {
                     <Copy className="mr-2 h-4 w-4" />
                     Copy Link
                 </DropdownMenuItem>
-                {/* Add more share options if needed */}
             </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
       <CardContent className="p-0">
         {renderMedia()}
-        {post.description && post.mediaType !== 'text' && ( // Only show description if not a text post or if explicitly set
+        {post.description && post.mediaType !== 'text' && (
            <p className="px-4 py-3 text-sm">{post.description}</p>
         )}
       </CardContent>
@@ -231,16 +256,16 @@ export function PostCard({ post }: PostCardProps) {
 
 export function PostCardSkeleton() {
   return (
-    <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-xl bg-background/70 dark:bg-background/50 backdrop-blur-md border border-white/20 dark:border-white/10">
+    <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-xl bg-background/70 dark:bg-background/50 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg">
       <CardHeader className="flex flex-row items-center gap-3 p-4">
-        <Skeleton className="h-10 w-10 bg-muted/50" />
+        <Skeleton className="h-10 w-10 rounded-full bg-muted/50" />
         <div className="flex flex-col space-y-1">
           <Skeleton className="h-4 w-24 bg-muted/50" />
           <Skeleton className="h-3 w-16 bg-muted/50" />
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <Skeleton className="aspect-video w-full bg-muted/50" />
+        <Skeleton className="aspect-video w-full bg-muted/50 rounded-t-lg" />
         <div className="px-4 py-3 space-y-2">
              <Skeleton className="h-4 w-full bg-muted/50" />
              <Skeleton className="h-4 w-3/4 bg-muted/50" />
