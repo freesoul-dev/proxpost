@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -74,17 +75,19 @@ export default function ExpandingMenu() {
       {/* Pulsing Menu Trigger Button */}
       {!isMenuOpen && (
         <Button
-          variant="default"
-          size="icon"
+          // variant="default" // Removed to apply custom background/text
+          size="icon" // Shadcn prop for icon buttons, we override h/w for specific size
           className={cn(
-            "fixed bottom-6 left-6 z-50 h-16 w-16 rounded-full shadow-xl",
-            "bg-green-500/70 hover:bg-green-500/90 dark:bg-green-600/70 dark:hover:bg-green-600/90 text-white",
-            "animate-pulse-shadow backdrop-blur-sm"
+            "fixed bottom-6 left-6 z-50 h-14 w-14 rounded-full shadow-xl", // Smaller size
+            // Custom background: semi-transparent, uses theme colors, hover effect
+            "bg-background/30 dark:bg-background/20 text-foreground",
+            "hover:bg-background/50 dark:hover:bg-background/40",
+            "animate-pulse-shadow backdrop-blur-sm border border-foreground/10" // Kept pulse, blur, added border
           )}
           onClick={() => setIsMenuOpen(true)}
           aria-label="Open menu"
         >
-          <MenuIcon className="h-8 w-8" />
+          <MenuIcon className="h-7 w-7" /> {/* Smaller icon */}
         </Button>
       )}
 
@@ -137,3 +140,4 @@ export default function ExpandingMenu() {
     </>
   );
 }
+
