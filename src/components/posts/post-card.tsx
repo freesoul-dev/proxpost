@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -147,7 +148,7 @@ export function PostCard({ post }: PostCardProps) {
         return (
           <div className={cn(
             "relative w-full p-4 flex items-center justify-center rounded-t-lg",
-            "bg-card/70 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-white/10",
+            "bg-card/60 dark:bg-card/50 backdrop-blur-md border border-white/20 dark:border-white/10",
             post.coverArtUrl ? "min-h-[200px]" : ""
           )}>
             {post.coverArtUrl && (
@@ -167,7 +168,7 @@ export function PostCard({ post }: PostCardProps) {
                 )}
                 {!post.coverArtUrl && <Music2 className="w-16 h-16 mb-2 text-white" />}
 
-                <audio controls className={cn("w-full bg-card/70 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg")} preload="metadata">
+                <audio controls className={cn("w-full bg-card/60 dark:bg-card/50 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg")} preload="metadata">
                  
                     <source src={post.mediaUrl!} />                    
                     Your browser does not support the audio element.
@@ -187,7 +188,7 @@ export function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group bg-card/70 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg">
+    <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group bg-card/60 dark:bg-card/50 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg">
       <CardHeader className="flex flex-row items-center gap-3 p-4">
         <Avatar className="h-10 w-10 border border-white/10 rounded-full">
           <AvatarImage src={post.userAvatarUrl} alt={`${post.userName}'s avatar`} data-ai-hint="user avatar" />
@@ -252,7 +253,7 @@ export function PostCard({ post }: PostCardProps) {
 
 export function PostCardSkeleton() {
   return (
-    <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-xl bg-background/70 dark:bg-background/50 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg">
+    <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-xl bg-background/60 dark:bg-background/40 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg">
       <CardHeader className="flex flex-row items-center gap-3 p-4">
         <Skeleton className="h-10 w-10 rounded-full bg-muted/50" />
         <div className="flex flex-col space-y-1">
@@ -277,3 +278,4 @@ export function PostCardSkeleton() {
     </Card>
   );
 }
+
