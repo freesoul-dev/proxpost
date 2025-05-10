@@ -181,8 +181,21 @@ export function PostFeed() {
     >
       <PullToRefreshIndicator />
       
-      <div className="flex justify-end items-center">
-          {/* Filter Select remains fixed via its own styles */}
+      <div className="z-30 flex items-center fixed top-6 right-6">
+        <Select value={mediaFilter} onValueChange={(value) => setMediaFilter(value as MediaType | 'all')}>
+          <SelectTrigger
+            className="w-auto min-w-[150px] bg-background/70 dark:bg-background/50 backdrop-blur-md border border-white/20 dark:border-white/10 text-foreground shadow-lg hover:bg-accent/70 dark:hover:bg-accent/50"
+          >
+            <SelectValue placeholder="Filter by type" />
+          </SelectTrigger>
+          <SelectContent className="bg-background/80 dark:bg-background/60 backdrop-blur-md border-white/20 dark:border-white/10">
+            <SelectItem value="all">All Media</SelectItem>
+            <SelectItem value="image">Images</SelectItem>
+            <SelectItem value="video">Videos</SelectItem>
+            <SelectItem value="audio">Audio</SelectItem>
+            <SelectItem value="text">Text</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       
       {isLoading ? (
@@ -211,23 +224,8 @@ export function PostFeed() {
         filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
       )}
 
-       <div className="z-20 flex items-center space-x-2 fixed bottom-4 left-4">
-            <Select value={mediaFilter} onValueChange={(value) => setMediaFilter(value as MediaType | 'all')}>
-            <SelectTrigger className="h-14 w-14 rounded-full shadow-xl bg-background/30 dark:bg-background/20 text-foreground hover:bg-background/50 dark:hover:bg-background/40 backdrop-blur-sm transition-colors duration-300 ease-in-out hover:bg-gray-800/80">
-                <SelectValue placeholder="Filter by type" />
-            </SelectTrigger>
-                <SelectContent className="bg-background/70 dark:bg-background/50">
-                    <SelectItem value="all">All Media</SelectItem>
-                    <SelectItem value="image">Images</SelectItem>
-                    <SelectItem value="video">Videos</SelectItem>
-                    <SelectItem value="audio">Audio</SelectItem>
-                    <SelectItem value="text">Text</SelectItem>
-                </SelectContent>
-            </Select>
-        </div>
-
        {showScrollToTop && (
-          <div className="fixed bottom-6 right-6 z-20"> {/* Ensure z-index is high enough */}
+          <div className="fixed bottom-6 right-6 z-20"> 
             <Button
               aria-label="Scroll to top"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -240,3 +238,4 @@ export function PostFeed() {
     </div>
   );
 }
+
