@@ -122,7 +122,7 @@ export function PostCard({ post }: PostCardProps) {
     switch (post.mediaType) {
       case 'image':
         return (
-          <div className="relative aspect-video w-full overflow-hidden rounded-t-lg">
+          <div className="relative aspect-video w-full overflow-hidden">
             <Image
               src={post.mediaUrl!}
               alt={post.description || 'User post image'}
@@ -136,7 +136,7 @@ export function PostCard({ post }: PostCardProps) {
         );
       case 'video':
         return (
-          <div className="relative aspect-video w-full overflow-hidden bg-black flex items-center justify-center rounded-t-lg">
+          <div className="relative aspect-video w-full overflow-hidden bg-black flex items-center justify-center">
              <video controls className="w-full h-full object-contain" preload="metadata">
                 <source src={post.mediaUrl!} />
                 Your browser does not support the video tag.
@@ -145,68 +145,66 @@ export function PostCard({ post }: PostCardProps) {
         );
       case 'audio':
         return (
-           <div className={cn(
-             "relative w-full p-4 flex items-center justify-center rounded-t-lg",
-             post.coverArtUrl ? "min-h-[200px]" : "bg-secondary/50"
-           )}>
-             {post.coverArtUrl && (
-                <Image 
-                    src={post.coverArtUrl} 
-                    alt={post.description || "Audio cover art"} 
-                    fill
-                    className="object-cover opacity-30 dark:opacity-20 blur-sm"
-                    data-ai-hint="audio cover"
-                />
-             )}
-             <div className="relative z-10 w-full flex flex-col items-center space-y-3">
+          <div className={cn(
+            "relative w-full p-4 flex items-center justify-center rounded-t-lg",
+            "bg-card/70 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-white/10",
+            post.coverArtUrl ? "min-h-[200px]" : ""
+          )}>
+            {post.coverArtUrl && (
+              <Image
+                src={post.coverArtUrl}
+                alt={post.description || "Audio cover art"}
+                fill
+                className="object-cover"
+                data-ai-hint="audio cover"
+              />
+            )}
+            <div className="absolute z-10 w-full flex flex-col items-center space-y-3">
                 {post.coverArtUrl && (
-                    <Image 
-                        src={post.coverArtUrl} 
-                        alt={post.description || "Audio cover art"} 
-                        width={128} 
-                        height={128} 
-                        className="rounded-md shadow-lg border border-white/10"
+                    <Image src={post.coverArtUrl} alt={post.description || "Audio cover art"} width={128} height={128} className="rounded-md shadow-lg "
                         data-ai-hint="audio cover"
                     />
                 )}
-                {!post.coverArtUrl && <Music2 className="w-16 h-16 text-muted-foreground mb-2" />}
-                 <audio controls className="w-full" preload="metadata">
-                    <source src={post.mediaUrl!} />
+                {!post.coverArtUrl && <Music2 className="w-16 h-16 mb-2 text-white" />}
+
+                <audio controls className={cn("w-full bg-card/70 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg")} preload="metadata">
+                 
+                    <source src={post.mediaUrl!} />                    
                     Your browser does not support the audio element.
                  </audio>
+                
              </div>
           </div>
         );
       case 'text':
         return (
-          <div className="p-4 min-h-[100px] flex items-center rounded-t-lg">
-            <p className="text-lg whitespace-pre-wrap break-words">{post.textContent}</p>
-          </div>
-        );
-      default:
+          <div className="px-4 py-3 min-h-[100px] rounded-t-lg">        
+              <p className="text-base text-white whitespace-pre-wrap break-words">{post.textContent}</p> 
+          </div>        
+        );      default:
         return <div className="h-48 w-full bg-muted/50 flex items-center justify-center rounded-t-lg">Unsupported media type</div>;
     }
   };
 
   return (
-    <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group bg-background/70 dark:bg-background/50 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg">
+    <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group bg-card/70 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-lg">
       <CardHeader className="flex flex-row items-center gap-3 p-4">
         <Avatar className="h-10 w-10 border border-white/10 rounded-full">
           <AvatarImage src={post.userAvatarUrl} alt={`${post.userName}'s avatar`} data-ai-hint="user avatar" />
           <AvatarFallback className="rounded-full">{post.userName.charAt(0).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <CardTitle className="text-base font-medium">{post.userName}</CardTitle>
-          <p className="text-xs text-muted-foreground">
-            {formatRelative(post.createdAt, new Date())}
+          <CardTitle className="text-base font-medium text-white">{post.userName}</CardTitle>
+          <p className="text-xs text-white/80"><span className="text-white">
+            {formatRelative(post.createdAt, new Date())}</span>
             {timeToExpire && <span className="mx-1">&middot;</span>}
-            {timeToExpire && <span className="text-xs text-accent">{timeToExpire}</span>}
+            {timeToExpire && <span className="text-xs text-white">{timeToExpire}</span>}
           </p>
         </div>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="ml-auto h-8 w-8">
-                    <Share2 className="h-4 w-4" />
+                    <Share2 className="h-4 w-4 text-white" />
                     <span className="sr-only">Share post</span>
                 </Button>
             </DropdownMenuTrigger>
@@ -219,22 +217,20 @@ export function PostCard({ post }: PostCardProps) {
         </DropdownMenu>
       </CardHeader>
       <CardContent className="p-0">
-        {renderMedia()}
-        {post.description && post.mediaType !== 'text' && (
-           <p className="px-4 py-3 text-sm">{post.description}</p>
-        )}
-      </CardContent>
+         {renderMedia()}
+         {post.description && post.mediaType !== 'text' && (          
+           <p className="px-4 py-3 text-sm text-white">{post.description}</p>
+         )}                </CardContent>
       <CardFooter className="flex flex-col items-start gap-3 p-4">
         <div className="flex items-center space-x-2">
             <Button variant="ghost" size="sm" onClick={handleLike} disabled={isLiking} aria-label="Like post">
-                <Heart className={`mr-2 h-4 w-4 ${likes > post.likes ? 'fill-accent text-accent' : '' }`} />
-                {likes} {likes === 1 ? 'Like' : 'Likes'}
-            </Button>
+                <Heart className={`mr-2 h-4 w-4 text-white ${likes > post.likes ? 'fill-accent text-accent' : '' }`} /> <span className='text-white'>{likes} {likes === 1 ? 'Like' : 'Likes'}</span>
+            </Button >
              <Button variant="ghost" size="sm" aria-label="View comments">
-                <MessageCircle className="mr-2 h-4 w-4" />
-                {commentsCount} {commentsCount === 1 ? 'Comment' : 'Comments'}
-             </Button>
-        </div>
+                <MessageCircle className="mr-2 h-4 w-4 text-white" />
+                <span className="text-white">{commentsCount} {commentsCount === 1 ? 'Comment' : 'Comments'}</span>
+             </Button>        </div>
+
         <form onSubmit={handleCommentSubmit} className="w-full flex gap-2 mt-2">
             <Textarea
                 placeholder="Add a comment..."
@@ -265,7 +261,7 @@ export function PostCardSkeleton() {
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <Skeleton className="aspect-video w-full bg-muted/50 rounded-t-lg" />
+        <Skeleton className="aspect-video w-full bg-muted/50" />
         <div className="px-4 py-3 space-y-2">
              <Skeleton className="h-4 w-full bg-muted/50" />
              <Skeleton className="h-4 w-3/4 bg-muted/50" />

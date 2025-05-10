@@ -39,8 +39,8 @@ export default function RootLayout({
       >
         <div
           className="fixed inset-0 -z-10 bg-cover bg-center"
-          style={{ backgroundImage: `url('https://picsum.photos/seed/ocean_birdseye/1920/1080')` }}
-          data-ai-hint="ocean birdseye"
+          style={{ backgroundImage: `url('https://img.goodfon.com/original/3840x2160/c/25/voda-volny-okean.jpg')` }}
+          data-ai-hint="ocean"
           aria-hidden="true"
         />
         <div className="relative z-0 flex flex-col flex-1 min-h-screen">

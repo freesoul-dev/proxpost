@@ -16,7 +16,7 @@ body {
     --popover-foreground: 210 10% 23%; /* Dark Gray */
     --primary: 0 0% 9%; /* Black */
     --primary-foreground: 0 0% 98%; /* Near White */
-    --secondary: 210 15% 90%; /* Lighter Gray */
+    --secondary: 210 15% 90%; /* Lighter Gray */ 
     --secondary-foreground: 0 0% 9%; /* Black */
     --muted: 210 15% 90%; /* Lighter Gray */
     --muted-foreground: 210 10% 45%; /* Medium Gray */

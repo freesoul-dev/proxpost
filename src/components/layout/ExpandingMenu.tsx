@@ -75,22 +75,18 @@ export default function ExpandingMenu() {
       {/* Pulsing Menu Trigger Button */}
       {!isMenuOpen && (
         <Button
-          // variant="default" // Removed to apply custom background/text
-          size="icon" // Shadcn prop for icon buttons, we override h/w for specific size
           className={cn(
-            "fixed bottom-6 left-6 z-50 h-14 w-14 rounded-full shadow-xl", // Smaller size
-            // Custom background: semi-transparent, uses theme colors, hover effect
-            "bg-background/30 dark:bg-background/20 text-foreground",
-            "hover:bg-background/50 dark:hover:bg-background/40",
-            "animate-pulse-shadow backdrop-blur-sm border border-foreground/10" // Kept pulse, blur, added border
-          )}
+            "fixed bottom-6 left-6 z-50 h-14 w-14 rounded-full shadow-xl bg-background/30 dark:bg-background/20 text-foreground hover:bg-background/50 dark:hover:bg-background/40 backdrop-blur-sm",
+            "transition-colors duration-300 ease-in-out hover:bg-gray-800/80 hover:text-white"
+          , "hover:bg-gray-800/80")}
           onClick={() => setIsMenuOpen(true)}
-          aria-label="Open menu"
         >
-          <MenuIcon className="h-7 w-7" /> {/* Smaller icon */}
+          <PlusCircle className="h-7 w-7 text-white" />
         </Button>
       )}
-
+      
+      
+      
       {/* Full Viewport Menu */}
       {isMenuOpen && (
         <div 
@@ -120,7 +116,7 @@ export default function ExpandingMenu() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-md">
               <CreatePostDialog onPostCreated={handlePostCreated}>
                 <Button variant="outline" size="lg" className="w-full h-auto py-4 flex flex-col items-center space-y-2 border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground transition-all duration-200 transform hover:scale-105 shadow-lg rounded-lg">
-                  <PlusCircle className="h-10 w-10" />
+                  <PlusCircle className="h-10 w-10 text-white" />
                   <span className="text-lg font-semibold">Create Post</span>
                 </Button>
               </CreatePostDialog>
