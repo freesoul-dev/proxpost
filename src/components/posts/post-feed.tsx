@@ -216,7 +216,7 @@ export function PostFeed() {
           </AlertDescription>
         </Alert>
       ) : filteredPosts.length === 0 ? (
-        <div className="text-center p-6 bg-background/60 dark:bg-background/40 backdrop-blur-md shadow-lg border border-white/20 dark:border-white/10 rounded-lg">
+        <div className="text-center p-6 bg-background/50 dark:bg-background/30 backdrop-blur-md shadow-lg border border-white/20 dark:border-white/10 rounded-lg">
             <p className="text-muted-foreground">
               {mediaFilter === 'all' ? 'No posts found nearby. Be the first to share!' : `No ${mediaFilter} posts found nearby.`}
             </p>
