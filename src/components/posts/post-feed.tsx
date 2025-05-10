@@ -185,7 +185,7 @@ export function PostFeed() {
       <div className="z-30 flex items-center fixed top-6 right-6">
         <Select value={mediaFilter} onValueChange={(value) => setMediaFilter(value as MediaType | 'all')}>
           <SelectTrigger
-            className="w-auto min-w-[150px] bg-background/70 dark:bg-background/50 backdrop-blur-md border border-white/20 dark:border-white/10 text-foreground shadow-lg hover:bg-accent/70 dark:hover:bg-accent/50"
+            className="w-auto min-w-[150px] bg-background/40 dark:bg-background/20 backdrop-blur-md border border-white/20 dark:border-white/10 text-foreground shadow-lg hover:bg-accent/70 dark:hover:bg-accent/50"
           >
             <SelectValue placeholder="Filter by type" />
           </SelectTrigger>
@@ -216,7 +216,7 @@ export function PostFeed() {
           </AlertDescription>
         </Alert>
       ) : filteredPosts.length === 0 ? (
-        <div className="text-center p-6 bg-background/50 dark:bg-background/30 backdrop-blur-md shadow-lg border border-white/20 dark:border-white/10 rounded-lg">
+        <div className="text-center p-6 bg-background/30 dark:bg-background/20 backdrop-blur-md shadow-lg border border-white/20 dark:border-white/10 rounded-lg">
             <p className="text-muted-foreground">
               {mediaFilter === 'all' ? 'No posts found nearby. Be the first to share!' : `No ${mediaFilter} posts found nearby.`}
             </p>

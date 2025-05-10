@@ -76,9 +76,10 @@ export default function ExpandingMenu() {
       {!isMenuOpen && (
         <Button
           className={cn(
-            "fixed bottom-6 left-6 z-50 h-14 w-14 rounded-full shadow-xl bg-background/20 dark:bg-background/10 text-foreground hover:bg-background/40 dark:hover:bg-background/30 backdrop-blur-sm", // Adjusted opacity here
-            "transition-colors duration-300 ease-in-out"
-          , "hover:bg-gray-800/80")} // Removed hover:text-white as it might conflict with icon color, and ensured hover bg is distinct
+            "fixed bottom-6 left-6 z-50 h-14 w-14 rounded-full shadow-xl bg-background/40 dark:bg-background/20 text-foreground backdrop-blur-sm",
+            "transition-colors duration-300 ease-in-out",
+            "hover:bg-gray-800/80" // Specific hover from prior request
+          )}
           onClick={() => setIsMenuOpen(true)}
           aria-label="Open menu"
         >
@@ -93,7 +94,7 @@ export default function ExpandingMenu() {
         <div 
           className={cn(
             "fixed inset-0 z-[100] flex flex-col items-center justify-center p-6",
-            "bg-background/80 dark:bg-background/70 backdrop-blur-xl",
+            "bg-background/70 dark:bg-background/60 backdrop-blur-xl", // Adjusted opacity for menu itself
             "transition-opacity duration-300 ease-in-out",
             isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           )}
