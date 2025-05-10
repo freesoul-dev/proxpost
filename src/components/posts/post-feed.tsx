@@ -230,7 +230,7 @@ export function PostFeed() {
             <Button
               aria-label="Scroll to top"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="bg-background/60 dark:bg-background/40 backdrop-blur-md p-2 rounded-full border-white/20 dark:border-white/10"
+              className="bg-background/40 dark:bg-background/20 backdrop-blur-md p-2 rounded-full border-white/20 dark:border-white/10"
             >
               <ArrowUp className="h-5 w-5" />
             </Button>
@@ -239,5 +239,4 @@ export function PostFeed() {
     </div>
   );
 }
-
 

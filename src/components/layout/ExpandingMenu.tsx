@@ -76,10 +76,11 @@ export default function ExpandingMenu() {
       {!isMenuOpen && (
         <Button
           className={cn(
-            "fixed bottom-6 left-6 z-50 h-14 w-14 rounded-full shadow-xl bg-background/30 dark:bg-background/20 text-foreground hover:bg-background/50 dark:hover:bg-background/40 backdrop-blur-sm",
-            "transition-colors duration-300 ease-in-out hover:bg-gray-800/80 hover:text-white"
-          , "hover:bg-gray-800/80")}
+            "fixed bottom-6 left-6 z-50 h-14 w-14 rounded-full shadow-xl bg-background/20 dark:bg-background/10 text-foreground hover:bg-background/40 dark:hover:bg-background/30 backdrop-blur-sm", // Adjusted opacity here
+            "transition-colors duration-300 ease-in-out"
+          , "hover:bg-gray-800/80")} // Removed hover:text-white as it might conflict with icon color, and ensured hover bg is distinct
           onClick={() => setIsMenuOpen(true)}
+          aria-label="Open menu"
         >
           <PlusCircle className="h-7 w-7 text-white" />
         </Button>
